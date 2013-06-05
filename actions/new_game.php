@@ -1,7 +1,10 @@
 <?php
 
-$title = 'new game';
+require_once('models/game.php');
 
-include('views/new_game.html');
+$game = new Game($GLOBALS['USER_ID']);
+$game->save();
+
+header("Location: $game->id");
 
 ?>

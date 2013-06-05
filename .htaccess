@@ -1,5 +1,6 @@
 RewriteEngine On
 
 RewriteRule ^$ index.php?action=new_game
-RewriteRule ^([0-9]+)$ index.php?action=game&game_id=$1
-RewriteRule ^([0-9]+)/move$ index.php?action=move&game_id=$1
+RewriteRule ^(\d+)$ index.php?action=game&game_id=$1
+RewriteRule ^(\d+)\.json$ index.php?action=game&game_id=$1&format=json
+RewriteRule ^(\d+)/move$ index.php?action=move&game_id=$1

@@ -11,7 +11,8 @@ class GameTest extends PHPUnit_Framework_TestCase {
   protected $backupGlobalsBlacklist = array('DB');
 
   protected function setUp() {
-    Game::bootstrap();
+    Game::dbDrop();
+    Game::dbSetup();
   }
 
   public function testCreateGame() {

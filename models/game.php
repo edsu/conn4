@@ -103,10 +103,13 @@ class Game {
     return $game;
   }
 
-  public static function bootstrap() {
+  public static function dbDrop() {
+    $GLOBALS['DB']->exec("DROP TABLE IF EXISTS game;");
+  }
+
+  public static function dbSetup() {
     $sql = "
-      DROP TABLE IF EXISTS game;
-      CREATE TABLE game (
+      CREATE TABLE IF NOT EXISTS game (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         turn INTEGER,
         player1 VARCHAR(255),
