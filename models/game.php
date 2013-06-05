@@ -15,6 +15,12 @@ class Game {
   }
 
   public function move($row, $col) {
+    if ($this->occupied($row, $col)) {
+      throw new InvalidMove("slot already occupied");
+    }
+    if ($row > 0 and ! $this->occupied($row - 1, $col)) {
+      throw new InvalidMove("slot below is unoccupied");
+    }
     $bit = $this->boardBit($row, $col);
     if ($this->turn == 1) {
       $this->board1 = $this->board1 | 1 << $bit;
@@ -127,6 +133,19 @@ class Game {
     }
   }
 
+  private function occupied($row, $col) {
+    $bit = $this->boardBit($row, $col);
+    if ($this->board1 & (1 << $bit))
+      return true;
+    else if ($this->board2 & (1 << $bit)) 
+      return true;
+    else
+      return false;
+  }
+
 }
 
+class InvalidMove extends Exception {}
+
 ?>
+

@@ -58,12 +58,20 @@ class GameTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($expected, $game->getState());
   }
 
-  /*
-  function testInvalidMove() {
+  function testDuplicateMove() {
+    $this->setExpectedException('InvalidMove');
     $game = new Game("1234");
-    $game->player2("5678");
+    $game->player2 = "5678";
+    $game->move(0, 0);
+    $game->move(0, 0);
   }
-   */
+
+  function testMissingSlotBelow() {
+    $this->setExpectedException('InvalidMove');
+    $game = new Game("1234");
+    $game->player2 = "5678";
+    $game->move(1, 0);
+  }
 
   function testVerticalWinner() {
     $game = new Game("1234");
@@ -100,16 +108,17 @@ class GameTest extends PHPUnit_Framework_TestCase {
   function testDiagonalWinner() {
     $game = new Game("1234");
     $game->player2 = "5678";
-    $game->move(0, 0);
-    $game->pass();
-    $this->assertEquals($game->winner(), null);
-    $game->move(1, 1);
-    $game->pass();
-    $this->assertEquals($game->winner(), null);
-    $game->move(2, 2);
-    $game->pass();
-    $this->assertEquals($game->winner(), null);
-    $game->move(3, 3);
+    $game->move(0, 0); #p1
+    $game->move(0, 1); #p2
+    $game->move(1, 1); #p1
+    $game->move(0, 2); #p2
+    $game->move(1, 2); #p1
+    $game->pass();     #p2
+    $game->move(2, 2); #p1
+    $game->move(0, 3); #p2
+    $game->move(1, 3); #p1
+    $game->move(2, 3); #p2
+    $game->move(3, 3); #p1
     $this->assertEquals($game->winner(), "1234");
   }
 
