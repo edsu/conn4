@@ -2,42 +2,76 @@
 
 class Game {
   public $id = null;
+  public $turn = 1;
   public $player1 = null;
   public $player2 = null;
   private $board1 = 0;
   private $board2 = 0;
 
-  public function move($player, $row, $col) {
-    $bit = $this->boardBit($row, $col);
-    $board = $this->board1 ? $player == $this.player1 : $this->board2;
-    if ($player == $this->player1) {
-      $this->board1 =  $this->board1 | 1 << $bit;
-    } else if ($player == $this->player2) {
-      $this->board2 = $this->board2 >> $bit;
+  public function __construct($player1=null) {
+    if ($player1) {
+      $this->player1 = $player1;
     }
   }
 
+  public function move($row, $col) {
+    $bit = $this->boardBit($row, $col);
+    if ($this->turn == 1) {
+      $this->board1 = $this->board1 | 1 << $bit;
+      $this->turn = 2;
+    } else {
+      $this->board2 = $this->board2 | 1 << $bit;
+      $this->turn = 1;
+    }
+  }
+
+  public function pass() {
+    if ($this->turn == 1) 
+      $this->turn = 2;
+    else
+      $this->turn = 1;
+  }
+
+  public function winner() {
+    if ($this->_winner($this->board1)) 
+      return $this->player1;
+    return null;
+  }
+
+  private function _winner($board) {
+    # magic math from: http://stackoverflow.com/a/7053051/324921
+    $y = $board & ($board >> 6);
+    if ($y & ($y >> 2 * 6))
+      return true;
+    $y = $board & ($board >> 7);
+    if ($y & ($y >> 2 * 7))
+      return true;
+    $y = $board & ($board >> 8);
+    if ($y & ($y >> 2 * 8))
+      return true;
+    $y = $board & ($board >> 1);
+    if ($y & ($y >> 2))
+      return true;
+    return false;
+  }
+
   public function getState() {
-    $state = array("turn" => 2, "board" => array());
+    $state = array("turn" => $this->turn, "board" => array());
     for ($col=0; $col<7; $col++) {
       $column = array();
       for ($row=0; $row<6; $row++) {
         $bit = $this->boardBit($row, $col);
         $x = 1 << $bit;
-        echo "\nrow=$row col=$col board1=$this->board1 bis=$bit x=$x ";
-
         if ($this->board1 & (1 << $bit)) {
           array_push($column, 1);
-          echo "hit";
-        } else if ($this->board2 & (1 << $bit)) {
+        }
+        if ($this->board2 & (1 << $bit)) {
           array_push($column, 2);
-          echo "hit";
         }
       }
       array_push($state['board'], $column);
     }
     return $state;
-    return json_decode('{"turn": 2, "board": [[1],[],[],[],[],[],[]]}');
   }
 
   public function boardBit($row, $col) {
@@ -46,9 +80,9 @@ class Game {
 
   public function save() {
     if ($this->id) {
-      $sql = "UPDATE game SET player1=:player1, player2=:player2, board1=:board1, board2=:board2 WHERE id=:id";
+      $sql = "UPDATE game SET turn=:turn, player1=:player1, player2=:player2, board1=:board1, board2=:board2 WHERE id=:id";
     } else {
-      $sql = "INSERT INTO game VALUES(:id, :player1, :player2, :board1, :board2)";
+      $sql = "INSERT INTO game VALUES(:id, :turn, :player1, :player2, :board1, :board2)";
     }
     $this->db($sql);
   }
@@ -68,6 +102,7 @@ class Game {
       DROP TABLE IF EXISTS game;
       CREATE TABLE game (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        turn INTEGER,
         player1 VARCHAR(255),
         player2 VARCHAR(255),
         board1 INTEGER,
@@ -85,6 +120,7 @@ class Game {
     $sth->bindValue(':player2', $this->player2);
     $sth->bindValue(':board1', $this->board1);
     $sth->bindValue(':board2', $this->board2);
+    $sth->bindValue(':turn', $this->turn);
     $sth->execute();
     if (! $this->id) {
       $this->id = $dbh->lastInsertId();

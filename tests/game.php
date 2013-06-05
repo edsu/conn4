@@ -15,25 +15,102 @@ class GameTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testCreateGame() {
-    $player1 = "1234";
-    $player2 = "5678";
-
-    $game = new Game();
-    $game->player1 = "1234";
+    $game = new Game("1234");
+    $this->assertEquals("1234", $game->player1);
+    $this->assertEquals(null, $game->player2);
     $this->assertEquals(null, $game->id);
+    $this->assertEquals(1, $game->turn);
     $game->save();
+
+    # saving should give the game an id
     $this->assertGreaterThan(0, $game->id);
     $gameId = $game->id;
 
+    # should be able to fetch the game from the db using its id
     $game = Game::fetch($gameId);
     $this->assertTrue(get_class($game) == 'Game');
-    $this->assertEquals($player1, $game->player1);
+    $this->assertEquals("1234", $game->player1);
     $this->assertEquals($gameId, $game->id);
 
-    $game->player2 = $player2;
+    # should be able to add the 2nd player and persist it
+    $game->player2 = "5678";
     $game->save();
     $game = Game::fetch($gameId);
-    $this->assertEquals($player2, $game->player2);
+    $this->assertEquals("5678", $game->player2);
+  }
+
+  function testMove() {
+    $game = new Game("123");
+    $game->player2 = "456";
+    $expected = ["turn" => 1, "board" => [[],[],[],[],[],[],[]]];
+    $this->assertEquals($expected, $game->getState());
+
+    $game->move(0, 1);
+    $expected = ["turn" => 2, "board" => [[],[1],[],[],[],[],[]]];
+    $this->assertEquals($expected, $game->getState());
+
+    $game->move(1, 1);
+    $expected = ["turn" => 1, "board" => [[],[1,2],[],[],[],[],[]]];
+    $this->assertEquals($expected, $game->getState());
+
+    $game->move(0, 0);
+    $expected = ["turn" => 2, "board" => [[1],[1,2],[],[],[],[],[]]];
+    $this->assertEquals($expected, $game->getState());
+  }
+
+  /*
+  function testInvalidMove() {
+    $game = new Game("1234");
+    $game->player2("5678");
+  }
+   */
+
+  function testVerticalWinner() {
+    $game = new Game("1234");
+    $game->player2 = "5678";
+    $game->move(0, 0);
+    $game->pass();
+    $this->assertEquals($game->winner(), null);
+    $game->move(1, 0);
+    $game->pass();
+    $this->assertEquals($game->winner(), null);
+    $game->move(2, 0);
+    $game->pass();
+    $this->assertEquals($game->winner(), null);
+    $game->move(3, 0);
+    $this->assertEquals($game->winner(), "1234");
+  }
+
+  function testHorizontalWinner() {
+    $game = new Game("1234");
+    $game->player2 = "5678";
+    $game->move(0, 0);
+    $game->pass();
+    $this->assertEquals($game->winner(), null);
+    $game->move(0, 1);
+    $game->pass();
+    $this->assertEquals($game->winner(), null);
+    $game->move(0, 2);
+    $game->pass();
+    $this->assertEquals($game->winner(), null);
+    $game->move(0, 3);
+    $this->assertEquals($game->winner(), "1234");
+  }
+
+  function testDiagonalWinner() {
+    $game = new Game("1234");
+    $game->player2 = "5678";
+    $game->move(0, 0);
+    $game->pass();
+    $this->assertEquals($game->winner(), null);
+    $game->move(1, 1);
+    $game->pass();
+    $this->assertEquals($game->winner(), null);
+    $game->move(2, 2);
+    $game->pass();
+    $this->assertEquals($game->winner(), null);
+    $game->move(3, 3);
+    $this->assertEquals($game->winner(), "1234");
   }
 
   function testBoardBit() {
@@ -43,18 +120,6 @@ class GameTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, $game->boardBit(0, 0));
     $this->assertEquals(1, $game->boardBit(1, 0));
     $this->assertEquals(17, $game->boardBit(3, 2));
-  }
-
-  function testMove() {
-    $game = new Game();
-    $player1 = "123";
-    $player2 = "456";
-    $game->player1 = $player1;
-    $game->player2 = $player2;
-    $game->move($player1, 0, 1);
-    $state = $game->getState();
-    $expected = '{"turn":2, "board": [[],[1],[],[],[],[],[]]}';
-    $this->assertEquals(json_decode($expected), $state);
   }
 
 }
