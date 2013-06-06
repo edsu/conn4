@@ -49,19 +49,19 @@ class GameTest extends PHPUnit_Framework_TestCase {
   function testMove() {
     $game = new Game("123");
     $game->player2 = "456";
-    $expected = ["turn" => 1, "board" => [[],[],[],[],[],[],[]]];
+    $expected = ["waitingForOpponent" => false, "turn" => 1, "board" => [[],[],[],[],[],[],[]]];
     $this->assertEquals($expected, $game->getState());
 
     $game->move(0, 1);
-    $expected = ["turn" => 2, "board" => [[],[1],[],[],[],[],[]]];
+    $expected = ["waitingForOpponent" => false, "turn" => 2, "board" => [[],[1],[],[],[],[],[]]];
     $this->assertEquals($expected, $game->getState());
 
     $game->move(1, 1);
-    $expected = ["turn" => 1, "board" => [[],[1,2],[],[],[],[],[]]];
+    $expected = ["waitingForOpponent" => false, "turn" => 1, "board" => [[],[1,2],[],[],[],[],[]]];
     $this->assertEquals($expected, $game->getState());
 
     $game->move(0, 0);
-    $expected = ["turn" => 2, "board" => [[1],[1,2],[],[],[],[],[]]];
+    $expected = ["waitingForOpponent" => false, "turn" => 2, "board" => [[1],[1,2],[],[],[],[],[]]];
     $this->assertEquals($expected, $game->getState());
   }
 

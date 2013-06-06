@@ -49,6 +49,8 @@ class Game {
   public function winner() {
     if ($this->_winner($this->board1)) 
       return $this->player1;
+    if ($this->_winner($this->board2))
+      return $this->player2;
     return null;
   }
 

@@ -1,0 +1,29 @@
+table {
+  border: thin solid blue;
+}
+
+tr {
+  height: 100px;
+}
+
+td {
+  border: thin solid #999999;
+  width: 100px;
+}
+
+td:hover {
+  background: #eeeeee;
+  cursor: pointer;
+}
+
+img.disc {
+}
+
+@media (max-width: 600px) {
+  tr {
+    height: 50px;
+  }
+  td {
+    width: 50px;
+  }
+}
