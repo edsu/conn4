@@ -12,6 +12,9 @@ case 'new_game':
 case 'game':
   include('actions/game.php');
   break;
+case 'move':
+  include('actions/move.php');
+  break;
 }
 
 ?>

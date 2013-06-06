@@ -40,6 +40,12 @@ class GameTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals("5678", $game->player2);
   }
 
+  function testWhoseMove() {
+    $game = new Game("123");
+    $game->player2 = "456";
+    $this->assertEquals($game->whoseMove(), "123");
+  }
+
   function testMove() {
     $game = new Game("123");
     $game->player2 = "456";

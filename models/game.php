@@ -14,12 +14,20 @@ class Game {
     }
   }
 
+  public function whoseMove() {
+    if ($this->turn == 1) {
+      return $this->player1;
+    } else if ($this->turn == 2) {
+      return $this->player2;
+    }
+  }
+
   public function move($row, $col) {
     if ($this->occupied($row, $col)) {
-      throw new InvalidMove("slot already occupied");
+      throw new InvalidMove("the slot you clicked is already occupied");
     }
     if ($row > 0 and ! $this->occupied($row - 1, $col)) {
-      throw new InvalidMove("slot below is unoccupied");
+      throw new InvalidMove("the slot below the one you clicked is unoccupied");
     }
     $bit = $this->boardBit($row, $col);
     if ($this->turn == 1) {
@@ -62,7 +70,10 @@ class Game {
   }
 
   public function getState() {
-    $state = array("turn" => $this->turn, "board" => array());
+    $state = [
+      "turn" => $this->turn, 
+      "board" => []
+    ];
     for ($col=0; $col<7; $col++) {
       $column = array();
       for ($row=0; $row<6; $row++) {
@@ -77,6 +88,9 @@ class Game {
       }
       array_push($state['board'], $column);
     }
+
+    $state['waitingForOpponent'] =  ! $this->player2 ? true : false;
+
     return $state;
   }
 
