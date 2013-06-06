@@ -7,7 +7,7 @@ Install
 * get a 64-bit ubuntu vm on ec2
 * yes, 64-bit is a requirement for the bitboard  :-)
 * apt-get install apache2 php5 phpunit make php5-sqlite git
-* git checkout https://github.com/edsu/conn4.git
+* git clone https://github.com/edsu/conn4.git
 * sudo mv conn4 /var/www/conn4
 * sudo a2enmod rewrite
 * cp apache.conf /etc/apache2/sites-enabled/000-default
