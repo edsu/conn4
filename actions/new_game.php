@@ -2,7 +2,7 @@
 
 require_once('models/game.php');
 
-$game = new Game($GLOBALS['USER_ID']);
+$game = new Game();
 $game->save();
 
 header("Location: $game->id");

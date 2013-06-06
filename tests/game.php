@@ -20,7 +20,6 @@ class GameTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals("1234", $game->player1);
     $this->assertEquals(null, $game->player2);
     $this->assertEquals(null, $game->id);
-    $this->assertEquals(1, $game->turn);
     $game->save();
 
     # saving should give the game an id
@@ -40,29 +39,29 @@ class GameTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals("5678", $game->player2);
   }
 
-  function testWhoseMove() {
-    $game = new Game("123");
-    $game->player2 = "456";
-    $this->assertEquals($game->whoseMove(), "123");
-  }
-
   function testMove() {
-    $game = new Game("123");
-    $game->player2 = "456";
-    $expected = ["waitingForOpponent" => false, "turn" => 1, "board" => [[],[],[],[],[],[],[]]];
-    $this->assertEquals($expected, $game->getState());
+    $game = new Game("1234");
+    $state = $game->getState("1234");
+    $this->assertEquals($state['status'], 'share');
+
+    $state = $game->getState("5678");
+    $this->assertEquals($state['status'], 'join');
+
+    $game->player2 = "5678";
+    $expected = ["status" => "play", "board" => [[],[],[],[],[],[],[]]];
+    $this->assertEquals($expected, $game->getState("1234"));
 
     $game->move(0, 1);
-    $expected = ["waitingForOpponent" => false, "turn" => 2, "board" => [[],[1],[],[],[],[],[]]];
-    $this->assertEquals($expected, $game->getState());
+    $expected = ["status" => "wait", "board" => [[],[1],[],[],[],[],[]]];
+    $this->assertEquals($expected, $game->getState("1234"));
 
     $game->move(1, 1);
-    $expected = ["waitingForOpponent" => false, "turn" => 1, "board" => [[],[1,2],[],[],[],[],[]]];
-    $this->assertEquals($expected, $game->getState());
+    $expected = ["status" => "play", "board" => [[],[1,2],[],[],[],[],[]]];
+    $this->assertEquals($expected, $game->getState("1234"));
 
     $game->move(0, 0);
-    $expected = ["waitingForOpponent" => false, "turn" => 2, "board" => [[1],[1,2],[],[],[],[],[]]];
-    $this->assertEquals($expected, $game->getState());
+    $expected = ["status" => "wait", "board" => [[1],[1,2],[],[],[],[],[]]];
+    $this->assertEquals($expected, $game->getState("1234"));
   }
 
   function testDuplicateMove() {
@@ -94,6 +93,8 @@ class GameTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($game->winner(), null);
     $game->move(3, 0);
     $this->assertEquals($game->winner(), "1234");
+    $this->assertEquals("won", $game->getStatus("1234"));
+    $this->assertEquals("lost", $game->getStatus("4678"));
   }
 
   function testHorizontalWinner() {

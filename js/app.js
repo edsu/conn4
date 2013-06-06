@@ -5,10 +5,11 @@
   var lastError = null;
   var lastStatus = null;
   var winner = null;
+  var newGame = location.pathname.replace(/\d+$/, '');
 
   function main() {
     updateBoard();
-    $("table td").click(clickCell);
+    $("table td").on('click', clickCell);
   }
 
   function updateBoard() {
@@ -34,28 +35,37 @@
             disc.attr({src: "img/circle-yellow.svg"});
           }
           cell.append(disc);
-          disc.fadeIn({duration: 2000});
+          disc.fadeIn({duration: 1500});
         }
       }
     }
-  
-    if (game.winner) {
-      var newGame = location.pathname.replace(/\d+$/, '');
-      if (game.winner == 'you') {
-        setStatus('<strong>Congrats</strong>, you won! Shall we <a href="' + newGame + '">play again</a>?');
-      } else {
-        setStatus('<em>Sorry</em>, you lost, better luck <a href="' + newGame + '">next time</a>.');
-      }
-    } else if (game.myMove) {
-      setStatus("Ok, it's your move. Make it a good one, ok?");
-    } else if (game.error) {
-      setError(game.error);
-    } else if (game.waitingForOpponent) {
-      setStatus('Hey, share this <a href="">link</a> with a friend so they can join your new <strong>conn4</strong> game.');
-    } else if (game.recentlyJoined) {
-      setStatus("<b>Welcome to the game!</b>");
-    }
 
+    if (game.error)
+      setError(game.error);
+
+    if (game.status == "join") {
+      setStatus("This game is open, feel free to join in.");
+      myMove = true;
+    } else if (game.status == "share") {
+      setStatus('Hey, share this <a href="">link</a> with a friend so they can join your new game.');
+      myMove = false;
+    } else if (game.status == "play") {
+      setStatus("Ok, it's your move. Make it a good one, ok?");
+      myMove = true;
+    } else if (game.status == "wait") {
+      setStatus("Your opponent is thinking...very, very hard.");
+      myMove = false;
+    } else if (game.status == "watch") {
+      setStatus("These game is underway, feel free to watch if you want.");
+      myMove = false;
+    } else if (game.status == "won") {
+      setStatus('<strong>Congrats</strong>, you won! Shall we <a href="' + newGame + '">play again</a>?');
+      $("table td").off('conn4');
+    } else if (game.status == "lost") {
+      setStatus('<em>Sorry</em>, you lost, better luck <a href="' + newGame + '">next time</a>.');
+      $("table td").off('click');
+    }
+  
     setTimeout(updateBoard, 5000);
   }
 
@@ -69,12 +79,32 @@
     var m = id.match(/r(\d+)c(\d+)/);
     var row = parseInt(m[1]);
     var column = parseInt(m[2]);
-    var move = {row: row, column: column};
-    sendingMove = true;
-    $.post(location.pathname + "/move", move, function(board) {
-      sendingMove = false;
-      drawBoard(board);
-    });
+
+    var move = nextAvailableCell(column);
+    if (move) {
+      sendingMove = true;
+      $.post(location.pathname + "/move", move, function(board) {
+        sendingMove = false;
+        drawBoard(board);
+      });
+    } else {
+      setError("You can't move there :(");
+    }
+  }
+
+  function nextAvailableCell(column) {
+    for (var row=0; row<60; row++) {
+      var id = cellId(row, column);
+      var cell = $(id);
+      if (! cell.html()) {
+        return {row: row, column: column};
+      }
+    }
+    return null;
+  }
+
+  function cellId(row, col) {
+    return "#r" + row + "c" + col;
   }
 
   function setStatus(msg) {
