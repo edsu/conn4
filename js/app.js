@@ -3,6 +3,7 @@
   var myMove = false;
   var sendingMove = false;
   var lastError = null;
+  var lastStatus = null;
   var winner = null;
 
   function main() {
@@ -37,7 +38,7 @@
         }
       }
     }
-
+  
     if (game.winner) {
       var newGame = location.pathname.replace(/\d+$/, '');
       if (game.winner == 'you') {
@@ -45,6 +46,8 @@
       } else {
         setStatus('<em>Sorry</em>, you lost, better luck <a href="' + newGame + '">next time</a>.');
       }
+    } else if (game.myMove) {
+      setStatus("Ok, it's your move. Make it a good one, ok?");
     } else if (game.error) {
       setError(game.error);
     } else if (game.waitingForOpponent) {
@@ -75,8 +78,10 @@
   }
 
   function setStatus(msg) {
+    if (lastStatus == msg) return;
+    lastStatus = msg;
     $("#status").empty();
-    $("#status").append('<div class="alert fade in span7 offset2"><button type="button" class="close" data-dismiss="alert">&times;</button>' + msg + '</div>');
+    $("#status").append('<div class="alert fade in"><button type="button" class="close" data-dismiss="alert">&times;</button>' + msg + '</div>');
   }
 
   function setError(msg) {
@@ -86,7 +91,7 @@
     var i = Math.floor((Math.random() * hails.length));
     var hail = hails[i];
     $("#error").empty();
-    $("#error").append('<div class="alert alert-block alert-error fade in span7 offset2"><button type="button" class="close" data-dismiss="alert">&times;</button> <strong>' + hail + '</strong>, ' + msg + '</div>');
+    $("#error").append('<div class="alert alert-block alert-error fade in"><button type="button" class="close" data-dismiss="alert">&times;</button> <strong>' + hail + '</strong>, ' + msg + '</div>');
   }
 
   main();

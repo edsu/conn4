@@ -1,5 +1,5 @@
 table {
-  border: thin solid blue;
+  border: 5px solid blue;
 }
 
 tr {
@@ -7,7 +7,7 @@ tr {
 }
 
 td {
-  border: thin solid #999999;
+  border: 5px solid blue;
   width: 100px;
 }
 
@@ -25,5 +25,8 @@ img.disc {
   }
   td {
     width: 50px;
+  }
+  td:hover {
+    background: white;
   }
 }
