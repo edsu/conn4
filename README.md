@@ -1,5 +1,4 @@
-conn4 is a simplistic connect 4 implementation along the lines of 
-this [specification](https://gist.github.com/jgonera/69930780b2c4b18f2838).
+conn4 is a simplistic [Connect Four](http://en.wikipedia.org/wiki/Connect_Four) implementation along the lines of this [specification](https://gist.github.com/jgonera/69930780b2c4b18f2838).
 
 Install
 -------
