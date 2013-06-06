@@ -7,6 +7,8 @@
   var winner = null;
   var newGame = location.pathname.replace(/\d+$/, '');
 
+  $("a.brand").attr("href", newGame);
+
   function main() {
     updateBoard();
     $("table td").on('click', clickCell);
