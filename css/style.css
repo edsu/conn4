@@ -21,10 +21,10 @@ img.disc {
 
 @media (max-width: 600px) {
   tr {
-    height: 50px;
+    height: 40px;
   }
   td {
-    width: 50px;
+    width: 40px;
   }
   td:hover {
     background: white;
