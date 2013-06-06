@@ -87,7 +87,9 @@ class Game {
 
   public function getStatus($player) {
     $winner = $this->winner();
-    if ($winner and $player == $winner) {
+    if ($winner and ($player != $this->player1) and ($player != $this->player2)) {
+      $status = "done";
+    } else if ($winner and $player == $winner) {
       $status = "won";
     } else if ($winner and $player != $winner) {
       $status = "lost";

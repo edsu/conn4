@@ -45,7 +45,10 @@
     if (game.error)
       setError(game.error);
 
-    if (game.status == "join") {
+    if (game.status == "done") {
+      setStatus('This game is over. The players have left the building. Wanna <a href="' + newGame + '">start your own</a>?');
+      myMove = false;
+    } else if (game.status == "join") {
       setStatus("This game is open, feel free to join in.");
       myMove = true;
     } else if (game.status == "share") {
