@@ -4,7 +4,7 @@ Install
 -------
 
 * get a 64-bit ubuntu vm on ec2
-* yes, 64-bit is a requirement for the bitboard  :-)
+* yes, 64-bit is a requirement for the [bitboard](https://github.com/edsu/conn4/blob/master/models/game.php#L49)  :-)
 * apt-get install apache2 php5 phpunit make php5-sqlite git
 * git clone https://github.com/edsu/conn4.git
 * sudo mv conn4 /var/www/conn4
