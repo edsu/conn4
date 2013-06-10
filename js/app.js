@@ -61,13 +61,13 @@
       setStatus("Your opponent is thinking...very, very hard.");
       myMove = false;
     } else if (game.status == "watch") {
-      setStatus("These game is underway, feel free to watch if you want.");
+      setStatus("This game is underway, feel free to watch if you want.");
       myMove = false;
     } else if (game.status == "won") {
       setStatus('<strong>Congrats</strong>, you won! Shall we <a href="' + newGame + '">play again</a>?');
       $("table td").off('conn4');
     } else if (game.status == "lost") {
-      setStatus('<em>Sorry</em>, you lost, better luck <a href="' + newGame + '">next time</a>.');
+      setStatus('<strong>Sorry</strong>, you lost, better luck <a href="' + newGame + '">next time</a>.');
       $("table td").off('click');
     }
   
